@@ -1,0 +1,50 @@
+.login-form {
+	background-color: #fff;
+	padding: 30px;
+	text-align: center;
+	border-radius: 10px;
+	marginn-top: 50px;
+}
+
+.login-form input[type="text"], .login-form input[type="password"] {
+	width: 200px;
+}
+
+.input-group {
+	margin: 10px;
+}
+
+.input-label {
+	width: 80px;
+	display: inline-block;
+}
+
+.submit-btn {
+	width: 100px;
+}
+
+.reg-link {
+	margin-top: 10px;
+}
+
+.reg-link a {
+	color: #999;
+	text-decoration: none;
+}
+
+.reg-link a:hover {
+	color: #000;
+}
+
+.container {
+		margin: auto;
+	}
+
+
+.header-container {
+	margin: auto; /*나를 기준으로 오른쪽  왼쪽을 맞춰라 주는 명령*/
+}
+
+.reg-form {
+	padding-top: 20px;
+}
