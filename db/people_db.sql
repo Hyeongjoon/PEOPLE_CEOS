@@ -15,6 +15,7 @@ create table user
          phone_number VARCHAR (15) NOT NULL,
          phone_verify boolean default false NOT NULL,
          email_verify boolean default false NOT NULL,
+         gender tinyint not null,  /** 0 male 1 female **/
          name VARCHAR(20) NOT NULL,
          birth_date date NOT NULL,
          primary key(uid),
@@ -65,7 +66,7 @@ create table bdc_req_table(
 create table bdc_table(
 	bid int unsigned NOT NULL AUTO_INCREMENT,
 	origin_own int unsigned,
-    current_own int unsigned,
+    current_own int unsigned, 
     kind tinyint unsigned NOT NULL, /** 0은 전혈 1은 성분 **/
     bd_date date NOT NULL,
     usable boolean NOT NULL default true,
@@ -162,50 +163,44 @@ create TABLE free_reply(
     foreign key(writer) references user(uid) on delete set null on update cascade
 )    Engine = InnoDB DEFAULT CHARSET = utf8;
 
-	DROP TABLE IF exists hs_donate;
-create table hs_donate(
+	DROP TABLE IF exists hs;
+create table hs(
 	date date,
-	num smallint unsigned default 0,
-    temp datetime default now()
+	user_num smallint unsigned default 0,
+    donate_num smallint unsigned default 0,
+    reg_bdc_num smallint unsigned default 0,
+    primary key(date)
 ) Engine = InnoDB DEFAULT CHARSET = utf8;
-
-	DROP TABLE IF exists hs_reg_bdc;
-create table hs_reg_bdc(
-	date date,
-	num smallint unsigned default 0
-)  Engine = InnoDB DEFAULT CHARSET = utf8;
   
 	DROP EVENT IF exists delete_cur_trans;
 create event delete_cur_trans
 	ON SCHEDULE 
 		EVERY 1 DAY
-        STARTS '2016-11-18 23:00:00'
+        STARTS '2016-11-20 23:59:59'
 	 DO 
      delete from cur_trans_table WHERE (to_days(now()) - to_days(cur_trans_table.reg_date)) <8; /**1주일 지나면 양도 현황 지워지게 하는거 **/
         
-	DROP EVENT IF exists insert_hs_donate;
-create event insert_hs_donate
+	DROP EVENT IF exists hs;
+create event hs
 	ON SCHEDULE 
 		EVERY 1 DAY
-        STARTS '2016-11-18 23:00:00'
-	 DO insert into hs_donate values(current_date() + interval 1 day , 0);
-
-	DROP EVENT IF exists insert_hs_reg_bdc;
-create event insert_hs_reg_bdc
-	ON SCHEDULE 
-		EVERY 1 DAY
-        STARTS '2016-11-18 23:00:00'
-	 DO insert into hs_reg_bdc values(current_date() + interval 1 day , 0);
+        STARTS '2016-11-20 23:00:00'
+	 DO insert into hs values(current_date() + interval 1 day , 0 , 0 , 0);
      
      DROP TRIGGER IF EXISTS plus_reg_bdc_num;
 create trigger plus_reg_bdc_num after INSERT ON bdc_table
 	for each row
-		UPDATE hs_reg_bdc SET hs_reg_bdc.num = hs_reg_bdc.num + 1 WHERE date = curdate();
+		UPDATE hs SET hs.reg_bdc_num = hs.reg_bdc_num + 1 WHERE date = curdate();
+        
+             DROP TRIGGER IF EXISTS plus_user_num;
+create trigger plus_user_num after INSERT ON user
+	for each row
+		UPDATE hs SET hs.user_num = hs.user_num + 1 WHERE date = curdate();
 
 	DROP TRIGGER IF EXISTS plus_donate_num;
 create trigger plus_donate_num after UPDATE ON bdc_table
 	for each row
-		 UPDATE hs_donate SET hs_donate.num = hs_donate.num + 1 WHERE NEW.donate_brtid != OLd.donate_brtid AND date = curdate();  /**이것만 나중에 확인**/
+		 UPDATE hs SET hs.donate_num = hs.donate_num + 1 WHERE NEW.donate_brtid != OLd.donate_brtid AND date = curdate();  /**이것만 나중에 확인**/
 		
         
 	DROP TRIGGER IF EXISTS delete_cur_trans;

@@ -6,8 +6,5 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: '피플' });
 });
 
-router.get('/register', function(req, res, next) {
-	  res.render('register' , {title : '회원가입' });
-});
 
 module.exports = router;
