@@ -1,10 +1,12 @@
 $(document).ready(function(){
+	
 	$('.input-group.date').datepicker({
 		container: '#datepicker-container',
 		endDate: "0d",
 		orientation: "bottom right",
 	    startView: 2,
 	    autoclose: true,
+	    format: 'yyyy-mm-dd',
 	    defaultViewDate: { year: 1991, month: 01, day: 20 }
 	});
 	
@@ -72,9 +74,7 @@ $(document).ready(function(){
 				},
 				success: function(result) {
 				if (result['result'] == true) {
-					$("#reg-modal-title").text("인증 메일 발송 완료");
-					$("#reg-modal-content").text("인증 메일 확인을 완료 해야 회원 가입이 완료 됩니다.");
-					$('#reg-modal').modal();    
+					location.replace('/success_mail');
 					} else if(result['result'] == 'exsitId'){
 						$("#reg-modal-title").text("ID가 존재합니다.");
 						$("#reg-modal-content").text("이미 가입된 ID 입니다. 다른 ID를 이용해 주세요.");

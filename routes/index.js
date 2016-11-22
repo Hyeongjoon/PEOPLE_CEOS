@@ -3,7 +3,13 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: '피플' });
+	var chklog=false;
+	var userName;
+	if(req.session.passport!==undefined){
+		chklog=true;
+		userName = req.session.passport.user.id;
+	} 
+  res.render('index', { title: '피플' , chklog : chklog , userName : userName});
 });
 
 

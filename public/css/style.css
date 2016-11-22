@@ -6,3 +6,15 @@
   padding: 10px;
   width: auto;
 }
+.log-form{
+	display:none;
+}
+.user-form{
+	
+	display:none;
+	
+}
+.user-name{
+	color: white;
+	padding-right: 5px;
+}

@@ -10,7 +10,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-		console.log(req.body);
 	  async.waterfall([function(callback){
 		  userDAO.findUserById(req.body.id , callback);
 	  }, function(args1 , callback){
@@ -24,6 +23,7 @@ router.post('/', function(req, res, next) {
 			  callback('exsitEmail' , null);
 		  } else{
 			  if(req.body.password ==req.body.passwordcon){
+				  console.log(req.body.birth_date);
 				  req.session.inform={
 						  id : req.body.id,
 						  password : req.body.password,

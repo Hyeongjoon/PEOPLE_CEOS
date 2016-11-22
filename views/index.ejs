@@ -12,8 +12,9 @@
 <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
 <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.js"></script>
 
-
-<script src="js/reg.js" type="text/javascript"></script>
+<script src="js/canvasjs.min.js" type="text/javascript"></script>
+<script src="js/index.js" type="text/javascript"></script>
+<script src="js/nav.js" type="text/javascript"></script>
 	
 <title><%=title%></title>
 
@@ -28,11 +29,17 @@
 <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet"	type="text/css">
 
 	<!-- Script to Activate the Carousel -->
-	<script>
+	<script type="text/javascript">
 		$('.carousel').carousel({
 			interval : 5000
 		//changes the speed
-		})
+		});
+		$(document).ready(function(){
+		<%if(chklog == false){%>
+			$('.log-form').show();
+		<%} else{%>
+			$('.user-form').show();
+		<%}%>});
 	</script>
 </head>
 
@@ -54,17 +61,26 @@
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">	
-					<form class="navbar-form navbar-right" action="/login" method="POST">
-						<div class="input-group input-group-sm">	
+					<form class="navbar-form navbar-right">
+						<div class="log-form">
+						<div class="input-group input-group-sm" id="login-id">	
 							<span class="input-group-addon" id="basic-addon1">Id</span> 
-							<input type="text" name="id" id="pwd" class="form-control"	placeholder="Id" aria-describedby="basic-addon1" />
+							<input type="text" name="id" id="id" class="form-control" placeholder="Id" aria-describedby="basic-addon1" />
 						</div>
-						<div class="input-group input-group-sm">
+						<div class="input-group input-group-sm" id="login-pwd">
 							<span class="input-group-addon" id="basic-addon1">Password</span>
 							<input type="password" name="pwd" id="pwd" placeholder="Password" class="form-control" aria-describedby="basic-addon1" />
 						</div>
-						<input class="btn btn-primary" type="submit" value="로그인" /> <a href="/register">
-						<button type="button" class="btn btn-primary">회원가입</button></a>
+						<input id="login" class="btn btn-primary" type="button" value="로그인" /> <a href="/register">
+						<button id="reg" type="button" class="btn btn-primary">회원가입</button></a>
+						</div>
+						<div class="user-form">
+							<span class="glyphicon glyphicon-user user-name" aria-hidden="true"></span>
+  							<span class="sr-only user-name" ></span>
+							<strong class="user-name" id="user-name"><%=userName%></strong>
+							<button id="my-page" type="button" class="btn btn-primary">myPage</button>
+							<button id="logout" type="button" class="btn btn-primary">로그아웃</button>
+						</div>
 					</form>
 			
 				<ul class="nav navbar-nav ">
@@ -144,11 +160,11 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4>
-							<i class="fa fa-fw fa-gift"></i>오늘의 헌혈증 등록 현황
+							<i class="fa fa-fw fa-gift"></i>이주의 헌혈증 등록 현황
 						</h4>
 					</div>
 					<div class="panel-body">
-						<img src="img/card.JPG" style="width: 100%; height: 80%" /> 
+						<div id="chartContainer" style="height: 300px; width: 100%;"></div> 
 						<a href="#" class="btn btn-default">자세히</a>
 					</div>
 				</div>
@@ -200,13 +216,25 @@
 			</div>
 		</div>
 		<!-- Footer -->
-		<footer>
-			<div class="row">
-				<div class="col-lg-12">
-					<p>Copyright &copy; Your website 2016</p>
-				</div>
+</div>
+<!-- Footer -->
+		<footer class="footer">
+			<div class="container">
+			<span class="text-muted">Copyright &copy; Your website 2016</span>
 			</div>
 		</footer>
+<div id="index-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="index-modal-title">Modal title</h4>
+        <div class="modal-body">
+        <p id="index-modal-content">하하하하하</p>
+      </div>
+      	</div>
+    	</div>
+  	</div>
 </div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>

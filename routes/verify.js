@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 			  res.render('failRegister' , {});
 			  //DB에 안들어가고 오류될시
 		  } else{
-			  res.render('index' , {title : 'people'});
+			  res.render('registerSuccess' , {title : 'people'});
 		  }
 	  });
 	});
