@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.js"></script>
+<script src="/js/bootstrap-datepicker.js" type="text/javascript"></script>
+
+	
+<title><%=title%></title>
+
+<!-- Custom CSS -->
+<link href="/css/modern-business.css" rel="stylesheet">
+
+<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet"	type="text/css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/bootstrap-datepicker3.css">
+<script src="/js/nav.js" type="text/javascript"></script>
+<script src="/js/rdc.js" type="text/javascript"></script>
+
+<!-- Custom Fonts -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+		$('.user-form').show();
+});
+</script>
+</head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" style="margin-right:30px;" href="/"><img alt="Brand" src="/img/logo.png" /></a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">	
+					<form class="navbar-form navbar-right">
+						<div class="log-form form-inline" style="padding:9px 0px 0px 0px;">
+							<div class="form-group">
+							<label class="sr-only" for="exampleInputEmail3">Email address</label>
+							<input type="text" name="id" id="id" class="form-control" placeholder="Id" aria-describedby="basic-addon1" style="background-color: #232323;margin-right:10px; height:25px; width:150px;"/>
+							</div>
+							<div class="form-group">
+							<input type="password" name="pwd" id="pwd" placeholder="pw" class="form-control" aria-describedby="basic-addon1" style="background-color: #232323; margin-right:10px;  height:25px; width:150px;"/>
+							</div>
+							<button id="login" class="btn btn-link" type="button" value="로그인" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; margin-right:30px; color:#969696;">로그인</button> <a href="/register">
+							<button id="reg" type="button" class="btn btn-link" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; color:#969696;">회원가입</button></a>
+						</div>
+						<div class="user-form" style="padding:10px 0px 0px 0px;">
+							<span class="glyphicon glyphicon-user user-name" aria-hidden="true"></span>
+  							<span class="sr-only user-name"></span>
+							<strong class="user-name" id="user-name"><%=userName%></strong>
+							<a href="/myPage"><button id="my-page" type="button" style="padding:0px 0px 4px 0px;" class="btn btn-link">myPage</button></a>
+							<button id="logout" type="button" class="btn btn-link" style="padding:0px 0px 4px 0px;">로그아웃</button>
+						</div>
+					</form>
+			
+				<ul class="nav navbar-nav ">
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/about?0"
+						>피플</a></li>
+					<li class="active" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="rdc"><a href="/rdc?user=<%=userName%>"
+						>헌혈증</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="donor"><a href="/donor"
+						>기부 게시판</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/commu"
+						>커뮤니티</a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+
+	<!-- Header Carousel -->
+
+	<!-- Page Content -->
+	<div class="container">
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h2 align="center">헌혈증 (<%=bdc_inform.length%>장)</h2>
+					<table class="table">
+						<thead>
+						<tr>
+							<th class="text-center" width="10%"></th>
+							<th class="text-center" width="40%">헌혈 증서 번호</th>
+							<th class="text-center" width="30%">헌혈 일자</th>
+							<th class="text-center" width="10%">사용하기</th>
+							<th class="text-center" width="10%">전달하기</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%for(var i = 0 ; i < bdc_inform.length ; i++){
+						var d = new Date(bdc_inform[i].bd_date);
+						var date;
+						if(d.getDate()<10){
+							date='0'+d.getDate();
+						} else {
+							date = d.getDate();
+						}
+						%>
+						<tr>
+							<th scope="row" class="text-center"><%=i+1%></th>
+							<td class="text-center"><%=bdc_inform[i].bdc_num%></td>
+							<td class="text-center"><%=d.getFullYear()%>.<%=d.getMonth()+1%>.<%=date%></td>
+							<%if(bdc_inform[i].usable == 1){%>
+							<td class="text-center"><button type="button" class="btn btn-primary" onclick="use(<%=bdc_inform[i].bid%>)">사용하기</button></td>
+							<td class="text-center"><button type="button" class="btn btn-primary" onclick="pass(<%=bdc_inform[i].bid%>)">전달하기</button></td>
+							<%} else {%>
+							<td class="text-center"></td>
+							<td class="text-center"></td>
+							<%}%>
+						</tr>
+						<%}%>
+						</tbody>
+					</table>
+					<div class="text-center">
+					<button class="btn btn-default" id="rdc-reg">헌혈증 등록 하기</button>
+					</div>
+					<h2 align="center">진행중인 헌혈증 (<%=cur_to_trans.length%>장)</h2>
+					<table class="table">
+						<thead>
+						<tr>
+							<th class="text-center"></th>
+							<th class="text-center">헌혈 증서 번호</th>
+							<th class="text-center">전달 일자</th>
+							<th class="text-center">진행 여부</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						<% for(var i = 0 ; i < cur_to_trans.length ; i++){
+						var d = new Date(cur_to_trans[i].reg_date);
+						var date;
+						if(d.getDate()<10){
+							date='0'+d.getDate();
+						} else {
+							date = d.getDate();
+						}
+						%>
+						<tr>
+							<th scope="row" class="text-center"><%=i+1%></th>
+							<td class="text-center" ><%=cur_to_trans[i].bdc_num%></td>
+							<td class="text-center"><%=d.getFullYear()%>.<%=d.getMonth()+1%>.<%=date%></td>
+							<td class="text-center">전달 진행중</td>
+							<td class="text-center"><button type="button" class="btn btn-primary" onclick="cancle(<%=cur_to_trans[i].bdc_id%>)">취소하기</button></td>
+						</tr>
+						<%}%>
+						</tbody>
+					</table>
+					
+					<h2 align="center">전달 받은 헌혈증 (<%=cur_from_trans.length%>장)</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th width="10%"></th>
+								<th class="text-center" width="30%">전달한 사람</th>
+								<th class="text-center" width="40%">전달 받은 일자</th>
+								<th class="text-center" width="10%">전달 받기</th>
+								<th class="text-center" width="10%">거절 하기</th>
+							</tr>
+						</thead>
+						<tbody>
+							<%for(var i = 0 ; i < cur_from_trans.length ; i++){
+							var d = new Date(cur_from_trans[i].reg_date);
+							var date;
+							if(d.getDate()<10){
+								date='0'+d.getDate();
+							} else {
+							date = d.getDate();
+							}
+							%>
+							<tr>
+								<th scope="row" class="text-center"><%=i+1%></th>
+								<td class="text-center"><%=cur_from_trans[i].from_name%></td>
+								<td class="text-center"><%=d.getFullYear()%>.<%=d.getMonth()+1%>.<%=date%></td>
+								<td class="text-center"><button type="button" class="btn btn-primary" onclick="passOk(<%=cur_from_trans[i].bdc_id%>,<%=cur_from_trans[i].from_id%>)">전달 받기</button></td>
+								<td class="text-center"><button type="button" class="btn btn-primary" onclick="passCancel(<%=cur_from_trans[i].bdc_id%>,<%=cur_from_trans[i].from_id%>)">거절 하기</button></td>
+							</tr>
+							<%}%>
+						</tbody>
+					</table>
+					
+					
+				</div>
+			</div>
+		</div>
+
+	
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="container">
+			<span class="text-muted">Copyright &copy; Your website 2016</span>
+			</div>
+		</footer>
+
+<div class="modal fade" id="rdc-reg-input-modal">
+  			<div class="modal-dialog">
+    		<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+      <form class="form-horizontal">
+          	<div class="form-group">
+    		<div class="col-md-5">
+    		<label for="bdc_type" class="control-label">헌혈 종류</label>
+    		<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-default"> 
+						<input type="radio"	name="bdc_type" id="kind" value="0"> 전혈 헌혈</label> 
+						<label class="btn btn-default"> 
+						<input type="radio"	name="bdc_type" id="kind2" value="1"> 성분 헌혈</label>
+					</div>
+    		</div>
+    		</div>
+    		<div class="form-group">
+    		<div class="col-md-5">
+    		<label for="bd_date" class="control-label">헌혈일자</label>
+    		<div class="">
+    			<div class="input-group date" id ="modal-date-picker-container">
+      			<input type="text" class="form-control" id="bd_date" readonly>
+      			<span class="input-group-btn">
+        		<button class="btn btn-default" type="button"><i class="glyphicon glyphicon-calendar"></i></button>
+      			</span>
+    			</div>
+    		</div>
+    		</div>
+    		</div>
+    		<div class="form-group">
+    		<div class="col-md-5">
+    		<label for="origin" class="control-label">혈액원명</label>
+    		<div class="input-group">
+      		<input type="text" class="form-control" id="origin" readonly>
+      		<span class="input-group-btn">
+        	<button class="btn btn-default" id="find_origin" type="button"><i class="glyphicon glyphicon-search"></i></button>
+      		</span>
+    		</div>
+    		<input type="hidden" id="origin_id" class="sr-only">
+    		</div>
+    		</div>
+        	<div class="form-group">
+    		<div class="col-md-5">
+    		<label for="disease_name" class="control-label">증서번호</label>
+    		<input type="number" class="form-control" id="bdc_num" placeholder="">
+    		</div>
+    		</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="bdc-reg-input-modal-btn">등록 하기</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">취소 하기</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="rdc-reg-modal">
+  			<div class="modal-dialog">
+    		<div class="modal-content">
+      		<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">알 림</h4>
+      </div>
+      <div class="modal-body">
+        <p>응급 환자가 생길 경우, 급하게 헌혈증을 기부해 줘야 합니다.</p>
+        <p>그럴경우, 우선적으로 헌혈증을 기부할 의향이 있습니까?</p>
+        <p>(기부 기록과 기부증서, 그리고 할인권과 같은 경우에 기존과 동일하게 적용 받습니다)</p>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="bdc_reg_submit">동 의</button>
+      	<button type="button" class="btn btn-primary" id="bdc_not_reg_submit">거절하고 등록</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">취소 하기</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="find-origin-modal">
+  			<div class="modal-dialog">
+    		<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-inline">
+  		<div class="form-group">
+    	<label for="findPeople">혈액원 찾기</label>
+    	<div class="input-group">
+      		<input type="text" class="form-control" id="find_origin">
+      		<span class="input-group-btn">
+        	<button class="btn btn-default" id="find_origin_btn" type="button"><i class="glyphicon glyphicon-search"></i></button>
+      		</span>
+  		</div>
+  		</div>
+		</div>
+		<table class="table" id="find_origin_content">
+			<thead>
+				<tr>
+					<th width="10%"></th>
+					<th width="40%">이름</th>
+					<th width="40%">연락처</th>
+					<th width="10%"></th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="origin-find-submit-btn">선택하기</button>
+      	<button type="button" class="btn btn-default" data-dismiss="modal">취소하기</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="rdc-pass-modal">
+  			<div class="modal-dialog">
+    		<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-inline">
+  		<div class="form-group">
+    	<label for="findPeople">사람찾기</label>
+    	<div class="input-group">
+      		<input type="text" class="form-control" id="find-input-name">
+      		<span class="input-group-btn">
+        	<button class="btn btn-default" id="find-people" type="button"><i class="glyphicon glyphicon-search"></i></button>
+      		</span>
+  		</div>
+  		</div>
+		</div>
+		<table class="table" id="find-people-content">
+			<thead>
+				<tr>
+					<th width="20%">이름</th>
+					<th width="70%">연락처</th>
+					<th width="10%"></th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		<input type="hidden" id="modal-bid">
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="bdc-pass-modal-btn">전달하기</button>
+      	<button type="button" class="btn btn-default" data-dismiss="modal">취소하기</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="rdc-pass-confirm-modal">
+  			<div class="modal-dialog">
+    		<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">알 림</h4>
+      </div>
+      <div class="modal-body">
+        <p>전달하기를 하게 되면 할인권 혜택 등 기부를 통해 얻게되는 혜택을 받을 수 없습니다.</p>
+        <p>또한 헌혈증의 소유권은 양도를 받는 사람에게 넘어가게 됩니다.</p>
+        <p>계속 전달을 하시겠습니까?</p>
+        <p>(단, 헌혈증 봉사시간은 헌혈증과는 별도로 vms와 대한적십자사와의 연동으로 최초의 헌혈을 한 사람이 인정받을 수 있습니다.)</p>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="bdc-pass-submit">동 의</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">거 절</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+	<div id="common-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="common-modal-title">Modal title</h4>
+        <div class="modal-body">
+        <p id="common-modal-content">하하하하하</p>
+      </div>
+      	</div>
+    	</div>
+  	</div>
+</div>
+
+	<div id="reload-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="reload-modal-title">Modal title</h4>
+        <div class="modal-body">
+        <p id="reload-modal-content">하하하하하</p>
+      </div>
+      	</div>
+      	<div class="modal-footer">
+      	<button type="button" class="btn btn-primary"  onClick="history.go(0)"  data-dismiss="modal">확 인</button>
+      	</div>
+    	</div>
+  	</div>
+</div>
+
+<div id="cancel-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >전달 취소</h4>
+        <div class="modal-body">
+        <p>정말로 취소하시겠습니까?</p>
+        <input type="hidden" class="sr-only" id="cancel-modal-bid">
+      </div>
+      	</div>
+      	<div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="cancel-trans-btn" data-dismiss="modal">확 인</button>
+      	<button type="button" class="btn btn-default" data-dismiss="modal">돌아가기</button>
+      	</div>
+    	</div>
+  	</div>
+</div>
+
+<div id="pass-ok-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >전달 받기</h4>
+        <div class="modal-body">
+        <p>전달 받겠습니까?</p>
+        <input type="hidden" class="sr-only" id="pass-ok-modal-bid">
+        <input type="hidden" class="sr-only" id="pass-ok-modal-from-id">
+      </div>
+      	</div>
+      	<div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="pass-ok-trans-btn" data-dismiss="modal">확 인</button>
+      	<button type="button" class="btn btn-default" data-dismiss="modal">돌아가기</button>
+      	</div>
+    	</div>
+  	</div>
+</div>
+
+<div id="pass-cancel-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >전달 취소</h4>
+        <div class="modal-body">
+        <p>정말로 취소하시겠습니까?</p>
+        <input type="hidden" class="sr-only" id="pass-cancel-modal-bid">
+        <input type="hidden" class="sr-only" id="pass-cancel-modal-from-id">
+      </div>
+      	</div>
+      	<div class="modal-footer">
+      	<button type="button" class="btn btn-primary" id="pass-cancel-trans-btn" data-dismiss="modal">확 인</button>
+      	<button type="button" class="btn btn-default" data-dismiss="modal">돌아가기</button>
+      	</div>
+    	</div>
+  	</div>
+</div>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+	
+</body>
+</html>

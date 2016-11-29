@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+<script src="http://code.jquery.com/ui/1.8.18/jquery-ui.js"></script>
+<script src="/js/canvasjs.min.js" type="text/javascript"></script>
+<script src="/js/nav.js" type="text/javascript"></script>	
+
+<title><%=title%></title>
+
+<!-- Custom CSS -->
+<link href="/css/modern-business.css" rel="stylesheet">
+
+<link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+<link rel="stylesheet" href="/css/style.css">
+<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet"	type="text/css">
+
+<!-- Custom Fonts -->
+
+<script type="text/javascript">
+function ctPage2(){
+	var chart = new CanvasJS.Chart("dailydonate", {
+		axisX: {
+			labelFormatter: function (e) {
+				return CanvasJS.formatDate( e.value, "MM DD");
+			}
+		},
+		axisY:{
+			includeZero: false
+		},
+		data: [{
+			type: "spline",
+			dataPoints: [
+			             <%for(var i = 0 ; i < info.day.length ; i++){
+			            	 var d = new Date(info.day[i].date);
+			            	%>
+			             	{ x: new Date(<%=d.getFullYear()%>, <%=d.getMonth()%>, <%=d.getDate()%>), y: <%=info.day[i].donate_num%> },
+						    <%}%>
+						 ]
+		}]
+	});
+	chart.render();
+	var chart2 = new CanvasJS.Chart("week_com", {
+		axisX: {
+			labelFormatter: function (e) {
+				return CanvasJS.formatDate( e.value, "MM DD");
+			}
+		},
+		axisY:{
+			includeZero: false
+		},
+		data: [{
+			type: "spline",
+			dataPoints: [
+			             <%for(var i = 0 ; i < info.week.length ; i++){
+			            	 var d = new Date(info.week[i].date_mon);
+			            	%>
+			             	{ x: new Date(<%=d.getFullYear()%>, <%=d.getMonth()%>, <%=d.getDate()%>), y: <%=info.week[i].com_req_num%> },
+						    <%}%>
+						 ]
+		}]
+	});
+	chart2.render();
+};
+function ctPage3(){
+	var chart3 = new CanvasJS.Chart("week_total_bdc", {
+		axisX: {
+			labelFormatter: function (e) {
+				return CanvasJS.formatDate( e.value, "MM DD");
+			}
+		},
+		axisY:{
+			includeZero: false
+		},
+		data: [{
+			type: "spline",
+			dataPoints: [
+			             <%for(var i = 0 ; i < info.week.length ; i++){
+			            	 var d = new Date(info.week[i].date_mon);
+			            	%>
+			             	{ x: new Date(<%=d.getFullYear()%>, <%=d.getMonth()%>, <%=d.getDate()%>), y: <%=info.week[i].total_bdc_num%> },
+						    <%}%>
+						 ]
+		}]
+	});
+	chart3.render();
+}
+	
+$(document).ready(function(){
+	
+	<%if(chklog == false){%>
+		$('.log-form').show();
+	<%} else{%>
+		$('.user-form').show();
+	<%}%>
+	$('#tab-2').on("shown.bs.tab", function() {
+		ctPage2();
+		$('#tab-2').off();
+	});
+	$('#tab-3').on("shown.bs.tab", function() {
+		ctPage3()
+		$('#tab-3').off();
+	});
+	
+	$('#myTab li:eq(<%=tabNum%>) a').tab('show');
+});
+</script>
+</head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" style="margin-right:30px;" href="/"><img alt="Brand" src="./img/logo.png" /></a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">	
+					<form class="navbar-form navbar-right">
+						<div class="log-form form-inline" style="padding:9px 0px 0px 0px;">
+							<div class="form-group">
+							<label class="sr-only" for="exampleInputEmail3">Email address</label>
+							<input type="text" name="id" id="id" class="form-control" placeholder="Id" aria-describedby="basic-addon1" style="background-color: #232323;margin-right:10px; height:25px; width:150px;"/>
+							</div>
+							<div class="form-group">
+							<input type="password" name="pwd" id="pwd" placeholder="pw" class="form-control" aria-describedby="basic-addon1" style="background-color: #232323; margin-right:10px;  height:25px; width:150px;"/>
+							</div>
+							<button id="login" class="btn btn-link" type="button" value="로그인" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; margin-right:30px; color:#969696;">로그인</button> <a href="/register">
+							<button id="reg" type="button" class="btn btn-link" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; color:#969696;">회원가입</button></a>
+						</div>
+						<div class="user-form" style="padding:10px 0px 0px 0px;">
+							<span class="glyphicon glyphicon-user user-name" aria-hidden="true"></span>
+  							<span class="sr-only user-name"></span>
+							<strong class="user-name" id="user-name"><%=userName%></strong>
+							<a href="/myPage"><button id="my-page" type="button" style="padding:0px 0px 4px 0px;" class="btn btn-link">myPage</button></a>
+							<button id="logout" type="button" class="btn btn-link" style="padding:0px 0px 4px 0px;">로그아웃</button>
+						</div>
+					</form>
+			
+				<ul class="nav navbar-nav ">
+					<li class="active" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/about?0"
+						>피플</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="rdc"><a href="/rdc?user=<%=userName%>"
+						>헌혈증</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="donor"><a href="/donor"
+						>기부 게시판</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/commu"
+						>커뮤니티</a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+
+	<!-- Header Carousel -->
+
+	<!-- Page Content -->
+	
+	<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  
+  <div class="container">
+  <ul class="nav nav-tabs" role="tablist" id="myTab">
+    <li role="presentation" class="active"><a href="#home" id="tab-1" aria-controls="home" role="tab" data-toggle="tab">피플 소개</a></li>
+    <li role="presentation"><a href="#profile" id="tab-2" aria-controls="profile" role="tab" data-toggle="tab">오늘의 기부</a></li>
+    <li role="presentation"><a href="#messages" id="tab-3" aria-controls="messages" role="tab" data-toggle="tab">헌혈증 등록 현황</a></li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="home">
+			<div class="panel panel-default">
+			<div class="panel-body" style="background-image:url(/img/about_tap0_background.jpg); height:738px;  background-repeat: no-repeat;">
+				
+				<h2 align="center">피플은 노력합니다</h2>
+				<h2></h2>
+				<h4 align="center">재발급이 필요없는 헌혈증을 만들고자 합니다.</h4>
+				<h2></h2>
+				<h4 align="center">헌혈증이 필요한 사람들에게 빠른 기부가 될 수 있도록 합니다.</h4>
+				<h2></h2>
+				<h4 align="center">서로를 돕고 서로를 챙기는 선행이 만연한 사회를 만들고자 합니다.</h4>
+			<div class="col-md-8 col-md-offset-2">
+			<table class="table table-bordered">
+				<thead>
+					<tr  class="active">
+						<th width="20%" class="text-center"></th>
+						<th width="10%" class="text-center">환급률</th>
+						<th width="10%" class="text-center">기부율</th>
+						<th width="60%" class="text-center">기부받는데 소요되는 시간</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="danger">
+						<th scope="row" class="text-center">서비스 전</th>
+						<td class="text-center">10%</td>
+						<td class="text-center">6%</td>
+						<td class="text-center">30일</td>
+					</tr>
+					<tr class="info">
+						<th scope="row" class="text-center">서비스 후</th>
+						<td class="text-center"><%=Math.round(((info.total.total_donate_num+info.total.total_use_num)/info.total.total_bdc_num)*100)%>%</td>
+						<td class="text-center"><%=Math.round(((info.total.total_donate_num)/info.total.total_bdc_num)*100)%>%</td>
+						<td class="text-center"><%=Math.round(info.total.total_date_num/info.total.total_com_req_num)%>일</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+			</div>
+			</div>
+		</div>
+    <div role="tabpanel" class="tab-pane fade" id="profile">
+    	<div class="panel panel-default">
+    	<div class="panel-body">
+		<div class="col-lg-12">
+			<h1 align="center">기부 현황</h1>
+			</div>
+				<div class="row">
+					<div class="col-md-6">
+					<div class="panel panel-default">
+					<div class="panel-heading">
+							<h4>
+								<i class="fa fa-fw fa-gift"></i>최근 7일 기부 건수
+							</h4>
+							</div>
+							<div class="panel-body">
+							<div id="dailydonate" style="height: 300px; width: 100%;"></div>
+							</div>
+							</div>
+					</div>
+					<div class="col-md-6">
+					<div class="panel panel-default">
+					<div class="panel-heading">
+							<h4>
+								<i class="fa fa-fw fa-gift"></i>최근 5주 기부 달성 건수
+							</h4>
+							</div>
+							<div class="panel-body">
+							<div id="week_com" style="height: 300px; width: 100%;"></div>
+							</div>
+							</div>
+					</div>
+				</div>
+				<div class="col-md-8 col-md-offset-2">
+				<table class="table">
+					<thead>
+						<tr>
+							<th></th>
+							<%for(var i =info.week.length-1 ; i > -1 ; i--){
+							%><th class="text-center"><%
+							var d = new Date(info.week[i].date_mon);
+							var firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+						    var week = Math.ceil((d.getDate() + firstDay)/7);
+							%><%=d.getMonth()+1%>월  <%=week%>주차</th>
+							<%}%>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row" class="text-center">기부 달성 건수</th>
+							<%for(var i =info.week.length-1 ; i > -1 ; i--){
+							%><td class="text-center"><%=info.week[i].com_req_num%></td>
+							<%}%>
+						</tr>
+						<tr>
+							<th scope="row" class="text-center">기부된 헌혈증 개수</th>
+							<%for(var i =info.week.length-1 ; i > -1 ; i--){
+							%><td class="text-center"><%=info.week[i].donate_num%></td>
+							<%}%>
+						</tr>
+						<tr>
+							<th scope="row" class="text-center">기부까지 걸리는 평균 시일</th>
+							<%for(var i =info.week.length-1 ; i > -1 ; i--){
+							%><%if(info.week[i].com_req_num==0){
+							%><td class="text-center">기부 X</td>
+							<% } else{
+							%><td class="text-center"><%=Math.round(info.week[i].date_num/info.week[i].com_req_num)%>일</td>
+							<%}}%>
+						</tr>
+					</tbody>
+				</table>
+				</div>
+			</div>
+			</div>
+	</div>
+    <div role="tabpanel" class="tab-pane fade" id="messages">
+    	<div class="panel panel-default">
+    		<div class="panel-body">
+    			<h2 align="center">헌혈증 등록 현황</h2>
+    				<div class="col-md-8 col-md-offset-2" style="padding-bottom : 50px">
+    					<div id="week_total_bdc" style="height: 300px; width: 100%;"></div>
+    				</div>
+    				<div class="col-md-8 col-md-offset-2">
+    					<table class="table">
+    						<thead>
+    							<tr>
+    								<th></th>
+    								<%for(var i =info.week.length-1 ; i > -1 ; i--){
+									%><th class="text-center"><%
+									var d = new Date(info.week[i].date_mon);
+									var firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+								    var week = Math.ceil((d.getDate() + firstDay)/7);
+									%><%=d.getMonth()+1%>월  <%=week%>주차</th>
+									<%}%>
+    							</tr>
+    						</thead>
+    						<tbody>
+    							<tr>
+    								<th scope="row" class="text-center">헌혈증 등록 건수</th>
+    								<%for(var i =info.week.length-1 ; i > -1 ; i--){
+										%><td class="text-center"><%=info.week[i].bdc_num%></td>
+									<%}%>
+    							</tr>
+    							<tr>
+    								<th scope="row" class="text-center">헌혈증 누적 등록 건수</th>
+    								<%for(var i =info.week.length-1 ; i > -1 ; i--){
+										%><td class="text-center"><%=info.week[i].total_bdc_num%></td>
+									<%}%>
+    							</tr>
+    						</tbody>
+    					</table>
+    				</div>
+    		</div>
+    	</div>
+    </div>
+ 
+</div>
+</div>
+	</div>
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="container">
+			<span class="text-muted">Copyright &copy; Your website 2016</span>
+			</div>
+		</footer>
+		<div id="reg-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" >
+ 	 <div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="reg-modal-title">Modal title</h4>
+        <div class="modal-body">
+        <p id="reg-modal-content">하하하하하</p>
+      </div>
+      	</div>
+    	</div>
+  	</div>
+</div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+	
+</body>
+</html>

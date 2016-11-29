@@ -1,6 +1,8 @@
 DROP DATABASE IF exists people;
 CREATE DATABASE people DEFAULT CHARACTER SET utf8;
 
+
+
 use people;
 
 SET foreign_key_checks = 0;
@@ -44,22 +46,37 @@ create table fr_list
     foreign key(target_uid) references user(uid) ON DELETE cascade on update cascade
 ) Engine =InnoDB DEFAULT CHARSET = utf8;
 
+	DROP TABLE IF exists hs_table; /**병원테이블**/
+create table hs_table(
+	hsid int unsigned AUTO_INCREMENT,
+    hs_name VARCHAR(50),
+    hs_num VARCHAR(50),
+    primary key(hsid)
+)  Engine =InnoDB DEFAULT CHARSET = utf8;
+
+	DROP TABLE IF exists origin_table;
+create table origin_table(
+	oid int unsigned AUTO_INCREMENT,
+    origin_name VARCHAR(50),
+    origin_num VARCHAR(50),
+    primary key(oid)
+) Engine = InnoDB DEFAULT CHARSET = utf8;
 
 	DROP TABLE IF exists bdc_req_table;
 create table bdc_req_table(
 	brt_id int unsigned NOT NULL AUTO_INCREMENT,
     aim_num tinyint unsigned NOT NULL,
-    current_num tinyint unsigned NOT NULL,
+    current_num tinyint unsigned default 0 NOT NULL,
     reg_date datetime default now(),
-    end_date datetime default now(),
-	sur_date date NOT NULL,
+    end_date date default null,
+	target_date date NOT NULL,
     sur_content VARCHAR(255) NOT NULL,
     writer int unsigned,
     content text default NULL,
-    hs_id int unsigned,
+    finish boolean default false,
+    confirm boolean default false,
     primary key(brt_id),
-    foreign key(writer) references user(uid) on delete set null on update cascade,
-    foreign key(hs_id) references hs_table(hs) on delete set null on update cascade
+    foreign key(writer) references user(uid) on delete set null on update cascade
 )  Engine =InnoDB DEFAULT CHARSET = utf8;
 
 	DROP TABLE IF exists bdc_table;
@@ -80,15 +97,6 @@ create table bdc_table(
     foreign key(donate_brtid) references bdc_req_table(brt_id) on delete set null on update cascade,
     unique(bdc_num)
 ) Engine = InnoDB DEFAULT CHARSET = utf8;
-
-	DROP TABLE IF exists hs_table;
-create table hs_table(
-	hs int unsigned NOT NULL AUTO_INCREMENT,
-    hs_name VARCHAR(50) NOT NULL,
-    hs_phone VARCHAR(15) NOT NULL,
-    hs_addr VARCHAR(255) NOT NULL,
-    primary key(hs)
-)  Engine = InnoDB DEFAULT CHARSET = utf8;
 
 	DROP TABLE IF exists trans_bdc_table;
 create table trans_bdc_table(
@@ -125,6 +133,14 @@ create table qna_board(
     reg_date datetime default now(),
     primary key(qid),
     foreign key(writer) references user(uid) on delete set null on update cascade
+)  Engine = InnoDB DEFAULT CHARSET = utf8;
+
+	DROP TABLE IF EXISTS total_board_num;
+create table total_board_num(
+	id tinyint unsigned,
+    qna_num int unsigned,
+    free_num int unsigned,
+    primary key(id)
 )  Engine = InnoDB DEFAULT CHARSET = utf8;
 
 	DROP TABLE IF EXISTS qna_reply;
@@ -168,29 +184,104 @@ create table hs(
 	date date,
 	user_num smallint unsigned default 0,
     donate_num smallint unsigned default 0,
-    reg_bdc_num smallint unsigned default 0,
+    bdc_num smallint unsigned default 0,
+    com_req_num smallint unsigned default 0,
+    date_num int unsigned default 0,
     primary key(date)
 ) Engine = InnoDB DEFAULT CHARSET = utf8;
-  
+	
+    DROP TABLE IF exists hs_week;
+create table hs_week(
+	date_mon date,
+    donate_num int unsigned default 0,
+    bdc_num int unsigned default 0,
+    com_req_num int unsigned default 0,
+    date_num int unsigned default 0,
+    total_bdc_num int unsigned,
+    primary key(date_mon)
+) Engine = InnoDB DEFAULT CHARSET = utf8;
+
+	DROP TABLE IF exists total;
+create table total(
+	id tinyint unsigned,
+	total_com_req_num int unsigned,
+    total_date_num bigint unsigned,
+    total_bdc_num int unsigned,
+    total_donate_num int unsigned,
+    total_use_num int unsigned,
+    primary key(id)
+) Engine = InnoDB DEFAULT CHARSET = utf8;
+
+
 	DROP EVENT IF exists delete_cur_trans;
+DELIMITER |
 create event delete_cur_trans
-	ON SCHEDULE 
+	ON SCHEDULE
 		EVERY 1 DAY
-        STARTS '2016-11-20 23:59:59'
-	 DO 
-     delete from cur_trans_table WHERE (to_days(now()) - to_days(cur_trans_table.reg_date)) <8; /**1주일 지나면 양도 현황 지워지게 하는거 **/
+        STARTS '2016-11-27 23:59:59'
+	DO
+	 BEGIN
+     update bdc_table SET usable = true WHERE bid IN ( SELECT * FROM (
+        SELECT bdc_id FROM cur_trans_table WHERE cur_trans_table.reg_date <date_sub(now() , interval 1 week)
+    ) AS p);
+     delete from cur_trans_table WHERE cur_trans_table.reg_date < date_sub(now() , interval 1 week); /**1주일 지나면 양도 현황 지워지게 하는거 **/
+     END|
+    DELIMITER ;
         
 	DROP EVENT IF exists hs;
 create event hs
-	ON SCHEDULE 
+	ON SCHEDULE
 		EVERY 1 DAY
-        STARTS '2016-11-20 23:00:00'
-	 DO insert into hs values(current_date() + interval 1 day , 0 , 0 , 0);
+        STARTS '2016-11-27 23:30:00'
+	 DO insert into hs values(current_date() + interval 1 day , 0 , 0 , 0 , 0, 0);
      
-     DROP TRIGGER IF EXISTS plus_reg_bdc_num;
-create trigger plus_reg_bdc_num after INSERT ON bdc_table
+     DROP EVENT IF exists finish_bdc_req_by_target;
+create event finish_bdc_req_by_target
+	ON SCHEDULE
+		EVERY 1 DAY
+        STARTS '2016-11-27 23:59:57'
+	DO UPDATE bdc_req_table set bdc_req_table.finish = true WHERE bdc_req_table.target_date < date(now()) and bdc_req_table.finish = false;
+     
+        DROP EVENT IF exists hs_week;
+create event hs_week
+	ON SCHEDULE
+		EVERY 1 week
+        STARTS '2016-12-03 23:59:58'
+        DO 
+        INSERT INTO hs_week (date_mon , donate_num , bdc_num , com_req_num , date_num, total_bdc_num)
+		SELECT curdate() - 6,
+		   sum(hs.donate_num) AS donate_num,
+		   sum(hs.bdc_num) AS bdc_num,
+           sum(hs.com_req_num) AS com_req_num ,
+		   sum(hs.date_num) AS date_num,
+           (select total_bdc_num from total WHERE id =1) AS total_bdc_num
+		FROM hs 
+		WHERE hs.date > curdate() - 7 ;
+     
+     DROP TRIGGER IF EXISTS plus_hs_bdc_num;
+DELIMITER |
+create trigger plus_hs_bdc_num after INSERT ON bdc_table
 	for each row
-		UPDATE hs SET hs.reg_bdc_num = hs.reg_bdc_num + 1 WHERE date = curdate();
+    BEGIN
+		UPDATE hs SET hs.bdc_num = hs.bdc_num + 1 WHERE date = curdate();
+        UPDATE total SET total.total_bdc_num = total.total_bdc_num + 1 WHERE id = 1;
+	END|
+    DELIMITER ;
+
+	DROP TRIGGER IF EXISTS plus_hs_and_total_com_req_num_and_date_num;
+DELIMITER |
+create TRIGGER plus_hs_com_req_num_and_date_num AFTER update ON  bdc_req_table
+	for each row
+    BEGIN
+		UPDATE hs SET hs.com_req_num = hs.com_req_num + 1 ,
+					  hs.date_num = hs.date_num + (to_days(now()) - to_days(new.reg_date) + 1)
+				WHERE new.finish != OLD.finish and hs.date = curdate();
+                
+		UPDATE total SET total.total_com_req_num = total.total_com_req_num + 1 ,
+						 total.total_date_num = total.total_date_num + (to_days(now()) - to_days(new.reg_date) + 1)
+			   WHERE new.finish != OLD.finish and total.id = 1;
+	END|
+    DELIMITER ;
         
              DROP TRIGGER IF EXISTS plus_user_num;
 create trigger plus_user_num after INSERT ON user
@@ -198,14 +289,42 @@ create trigger plus_user_num after INSERT ON user
 		UPDATE hs SET hs.user_num = hs.user_num + 1 WHERE date = curdate();
 
 	DROP TRIGGER IF EXISTS plus_donate_num;
+    DELIMITER &&
 create trigger plus_donate_num after UPDATE ON bdc_table
 	for each row
-		 UPDATE hs SET hs.donate_num = hs.donate_num + 1 WHERE NEW.donate_brtid != OLd.donate_brtid AND date = curdate();  /**이것만 나중에 확인**/
+    BEGIN
+		 UPDATE hs SET hs.donate_num = hs.donate_num + 1 WHERE NEW.donate_brtid IS NOT null AND OLd.donate_brtid IS null AND hs.date = curdate();  
+		 UPDATE total SET total.total_donate_num = total.total_donate_num + 1 WHERE NEW.donate_brtid IS NOT null AND OLd.donate_brtid IS null  AND total.id=1;
+	END&&
+    DELIMITER ;
 		
-        
 	DROP TRIGGER IF EXISTS delete_cur_trans;
 create TRIGGER delete_cur_trans after INSERT ON trans_bdc_table
 	for each row
 		delete from cur_trans_table WHERE NEW.bdc_id = cur_trans_table.bdc_id; 
 	
+    DROP TRIGGER IF EXISTS plus_qna_num;
+create trigger plus_qna_num after INSERT ON qna_board
+	for each row
+		UPDATE total_board_num SET total_board_num.qna_num = total_board_num.qna_num + 1 WHERE id=1;
+
+DROP TRIGGER IF EXISTS sub_qna_num;
+create trigger sub_qna_num after DELETE ON qna_board
+	for each row
+		UPDATE total_board_num SET total_board_num.qna_num = total_board_num.qna_num - 1 WHERE id=1;
+        
+DROP TRIGGER IF EXISTS plus_free_num;
+create trigger plus_free_num after INSERT ON  free_board
+	for each row
+		UPDATE total_board_num SET total_board_num. free_num = total_board_num. free_num + 1 WHERE id=1;
+
+DROP TRIGGER IF EXISTS sub_free_num;
+create trigger sub_free_num after DELETE ON  free_board
+	for each row
+		UPDATE total_board_num SET total_board_num. free_num = total_board_num.free_num - 1 WHERE id=1;
+    
 SET foreign_key_checks = 1;
+
+insert into total_board_num values( 1 , 0 , 0);
+insert into total values(1,0,0,0,0,0);
+insert into hs values(now(),0,0,0,0,0);

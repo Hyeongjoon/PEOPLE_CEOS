@@ -12,21 +12,21 @@
 <script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
 <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.js"></script>
 
-<script src="js/canvasjs.min.js" type="text/javascript"></script>
-<script src="js/index.js" type="text/javascript"></script>
-<script src="js/nav.js" type="text/javascript"></script>
+<script src="/js/canvasjs.min.js" type="text/javascript"></script>
+<script src="/js/index.js" type="text/javascript"></script>
+<script src="/js/nav.js" type="text/javascript"></script>
 	
 <title><%=title%></title>
 
 <!-- Custom CSS -->
-<link href="css/modern-business.css" rel="stylesheet">
+<link href="/css/modern-business.css" rel="stylesheet">
 
 <link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/css/style.css">
 
 
 <!-- Custom Fonts -->
-<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet"	type="text/css">
+<link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet"	type="text/css">
 
 	<!-- Script to Activate the Carousel -->
 	<script type="text/javascript">
@@ -39,7 +39,73 @@
 			$('.log-form').show();
 		<%} else{%>
 			$('.user-form').show();
-		<%}%>});
+		<%}%>
+		CanvasJS.addColorSet("reg_bdc_color_set",
+			      [//colorSet Array
+			      "#dd4b4b",
+			      "#e0003b",
+			      "#e21b50",
+			      "#e5295b",
+			      "#ee4169",
+			      "#e9577f",
+					"#ec698a",
+					"#ea96ad",
+			     ]); 
+		var chart = new CanvasJS.Chart("chartContainer", {
+			colorSet:  "reg_bdc_color_set",
+			axisX: {
+				labelFormatter: function (e) {
+					return CanvasJS.formatDate( e.value, "DDD");
+				}
+			},
+			axisY:{
+				lineThickness: 0,
+				gridColor: "#e5e5e5",
+				tickColor: "#e5e5e5",
+				labelFontColor: "#e5e5e5",
+				includeZero: false
+			},
+			data: [{
+				type: "spline",
+				dataPoints: [
+				             <%for(var i = 0 ; i < hs.length ; i++){
+				            	 var d = new Date(hs[i].date);
+				            	%>
+				             	{ x: new Date(<%=d.getFullYear()%>, <%=d.getMonth()%>, <%=d.getDate()%>), y: <%=hs[i].bdc_num%> },
+							    <%}%>
+							 ]
+			}]
+		});
+		chart.render();
+		
+		var donorChart = new CanvasJS.Chart("donorChart", {
+			dataPointWidth: 5,
+			colorSet:  "reg_bdc_color_set",
+			axisX: {
+				labelFormatter: function (e) {
+					return CanvasJS.formatDate( e.value, "DDD");
+				}
+			},
+			axisY:{
+				lineThickness: 0,
+				gridColor: "#e5e5e5",
+				tickColor: "#e5e5e5",
+				labelFontColor: "#e5e5e5",
+				includeZero: false
+			},
+			data: [{
+				type: "column",
+				dataPoints: [
+				             <%for(var i = 0 ; i < hs.length ; i++){
+				            	 var d = new Date(hs[i].date);
+				            	%>
+				             	{ x: new Date(<%=d.getFullYear()%>, <%=d.getMonth()%>, <%=d.getDate()%>), y: <%=hs[i].donate_num%> },
+							    <%}%>
+							 ]
+			}]
+		});
+		donorChart.render();
+		});
 	</script>
 </head>
 
@@ -56,42 +122,41 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/"><img alt="Brand" src="img/logo.png" /></a>
+				<a class="navbar-brand" style="margin-right:30px;" href="/"><img alt="Brand" src="img/logo.png" /></a>
 			</div>
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">	
 					<form class="navbar-form navbar-right">
-						<div class="log-form">
-						<div class="input-group input-group-sm" id="login-id">	
-							<span class="input-group-addon" id="basic-addon1">Id</span> 
-							<input type="text" name="id" id="id" class="form-control" placeholder="Id" aria-describedby="basic-addon1" />
+						<div class="log-form form-inline" style="padding:9px 0px 0px 0px;">
+							<div class="form-group">
+							<label class="sr-only" for="exampleInputEmail3">Email address</label>
+							<input type="text" name="id" id="id" class="form-control" placeholder="Id" aria-describedby="basic-addon1" style="background-color: #232323;margin-right:10px; height:25px; width:150px;"/>
+							</div>
+							<div class="form-group">
+							<input type="password" name="pwd" id="pwd" placeholder="pw" class="form-control" aria-describedby="basic-addon1" style="background-color: #232323; margin-right:10px;  height:25px; width:150px;"/>
+							</div>
+							<button id="login" class="btn btn-link" type="button" value="로그인" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; margin-right:30px; color:#969696;">로그인</button> <a href="/register">
+							<button id="reg" type="button" class="btn btn-link" style="background-color: #232323; height:25px; padding:0px 0px 0px 0px; color:#969696;">회원가입</button></a>
 						</div>
-						<div class="input-group input-group-sm" id="login-pwd">
-							<span class="input-group-addon" id="basic-addon1">Password</span>
-							<input type="password" name="pwd" id="pwd" placeholder="Password" class="form-control" aria-describedby="basic-addon1" />
-						</div>
-						<input id="login" class="btn btn-primary" type="button" value="로그인" /> <a href="/register">
-						<button id="reg" type="button" class="btn btn-primary">회원가입</button></a>
-						</div>
-						<div class="user-form">
+						<div class="user-form" style="padding:10px 0px 0px 0px;">
 							<span class="glyphicon glyphicon-user user-name" aria-hidden="true"></span>
-  							<span class="sr-only user-name" ></span>
+  							<span class="sr-only user-name"></span>
 							<strong class="user-name" id="user-name"><%=userName%></strong>
-							<button id="my-page" type="button" class="btn btn-primary">myPage</button>
-							<button id="logout" type="button" class="btn btn-primary">로그아웃</button>
+							<a href="/myPage"><button id="my-page" type="button" style="padding:0px 0px 4px 0px;" class="btn btn-link">myPage</button></a>
+							<button id="logout" type="button" class="btn btn-link" style="padding:0px 0px 4px 0px;">로그아웃</button>
 						</div>
 					</form>
 			
 				<ul class="nav navbar-nav ">
-					<li style="align: center"><a href="card.php"
-						style="color: white">피플이란?</a></li>
-					<li style="align: center"><a href="card.php"
-						style="color: white">헌혈증</a></li>
-					<li style="align: center"><a href="donor.php"
-						style="color: white">기부 게시판</a></li>
-					<li style="align: center"><a href="contact.php"
-						style="color: white">커뮤니티</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/about?0"
+						>피플</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="rdc"><a href="/rdc?user=<%=userName%>"
+						>헌혈증</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="donor"><a href="/donor"
+						>기부 게시판</a></li>
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/commu"
+						>커뮤니티</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -111,13 +176,10 @@
 		<!-- Wrapper for slides -->
 		<div class="carousel-inner">
 			<div class="item active">
-				<div class="fill" style="background-image: url('http://placehold.it/1900x1080&amp;text=Slide One');"></div>
-				<div class="carousel-caption">
-					<h2>Caption 1</h2>
-				</div>
+				<div class="fill" style="background-image:url('/img/main_slide_1.jpg');"></div>
 			</div>
 			<div class="item">
-				<div class="fill" style="background-image: url('http://placehold.it/1900x1080&amp;text=Slide Two');"></div>
+				<div class="fill" style="background-image: url('/img/main_slide_2.png');"></div>
 				<div class="carousel-caption">
 					<h2>Caption 2</h2>
 				</div>
@@ -141,31 +203,36 @@
 		<!-- Marketing Icons Section -->
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">오늘의 현황</h1>
+				<h1 class="page-header">피플 금주의 현황</h1>
 			</div>
 			<div class="col-md-6">
-				<div class="panel panel-default">
+			<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4>
-							<i class="fa fa-fw fa-check" style=""></i> 오늘의 기부 현황
+							<i class="glyphicon glyphicon-tint"></i> 금주의 현혈증 등록 현황
 						</h4>
 					</div>
 					<div class="panel-body">
-						<div class="ct-chart ct-perfect-fourth"></div>
-						<a href="#" class="btn btn-default">자세히</a>
+						<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+						<div class="text-right"> 
+						<a href="/about?2" class="btn btn-link btn-lg" style="color: #a0a0a0;"><i class="glyphicon glyphicon-search" style=""></i></a>
+						</div>
 					</div>
 				</div>
+				
 			</div>
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4>
-							<i class="fa fa-fw fa-gift"></i>이주의 헌혈증 등록 현황
+							<i class="glyphicon glyphicon-tint" style=""></i> 금주의 기부 현황
 						</h4>
 					</div>
 					<div class="panel-body">
-						<div id="chartContainer" style="height: 300px; width: 100%;"></div> 
-						<a href="#" class="btn btn-default">자세히</a>
+						<div id="donorChart" style="height: 300px; width: 100%;"></div>
+						<div class="text-right">
+						<a href="/about?1" class="btn btn-link btn-lg" style="color: #a0a0a0;"><i class="glyphicon glyphicon-search" style=""></i></a>
+						</div>
 					</div>
 				</div>
 			</div>

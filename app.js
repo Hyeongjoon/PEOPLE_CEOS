@@ -34,21 +34,22 @@ var session = new Session({
 
 var app = express();
 
-app.set('port', 80);
-app.listen(app.get('port'));
+//app.set('port', 80);
+//app.listen(app.get('port'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'img/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(CookiePaser);
 app.use(session);
-app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -60,6 +61,11 @@ var register = require('./routes/register');
 var verifyMail = require('./routes/verify');
 var success_mail = require('./routes/success_mail');
 var logout = require('./routes/logout');
+var about = require('./routes/about');
+var rdc = require('./routes/rdc');
+var donor = require('./routes/donor');
+var myPage = require('./routes/myPage');
+var commu = require('./routes/commu');
 
 
 app.use('/', index);
@@ -67,12 +73,17 @@ app.use('/login',notensureAuthenticated, login);
 app.use('/register',notensureAuthenticated, register);
 app.use('/success_mail',notensureAuthenticated, success_mail);
 app.use('/logout' , logout);
+app.use('/about' , about);
+app.use('/rdc' , ensureAuthenticated , rdc);
+app.use('/donor' , ensureAuthenticated  , donor);
+app.use('/myPage' , ensureAuthenticated  , myPage);
+app.use('/commu' , ensureAuthenticated, commu);
 
 function ensureAuthenticated(req, res, next) {
     // 로그인이 되어 있으면, 다음 파이프라인으로 진행
     if (req.isAuthenticated()) { return next(); }
     // 로그인이 안되어 있으면, 만료된 페이지 
-    res.redirect('/');
+    res.render('invalid' , {title:'피플'});
 }
 
 function notensureAuthenticated(req, res, next) {
