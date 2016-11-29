@@ -54,5 +54,16 @@ exports.deletion = function(params , callback){
 	});
 }
 
+exports.lastInsertId = function(params, inform, callback ) {
+		connection.query(params, inform, function(err, rows, fields) {
+			if (!err) {
+				callback(null, rows);
+			} else {
+				console.log("err" + err);
+				callback(err, false);
+			}
+		});
+};
+
 
 

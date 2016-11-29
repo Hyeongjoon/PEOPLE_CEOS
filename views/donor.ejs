@@ -79,7 +79,7 @@ $(document).ready(function(){
 						>헌혈증</a></li>
 					<li class="active" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;" id="donor"><a href="/donor"
 						>기부 게시판</a></li>
-					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/commu"
+					<li class="" style="align: center; padding:4px 0px 0px 0px; margin-right:30px;"><a href="/commu?tab=0"
 						>커뮤니티</a></li>
 				</ul>
 			</div>
@@ -93,13 +93,13 @@ $(document).ready(function(){
 	<!-- Page Content -->
 	<div class="container">
 	<div role="tabpanel">
-	<ul class="nav nav-tabs" role="tablist" id="myTab">
-    <li role="presentation" class="active"><a href="#donor" aria-controls="donor" role="tab" data-toggle="tab">기부 하기</a></li>
-    <li role="presentation"><a href="#receive" aria-controls="receive" role="tab" data-toggle="tab">기부 받기</a></li>
+	<ul class="nav nav-tabs" role="tablist" id="donorTab">
+    <li role="presentation" class="active"><a href="#donor" aria-controls="donor" role="tab" data-toggle="tab" >기부 하기</a></li>
+    <li role="presentation"><a href="#receive" aria-controls="receive" role="tab" data-toggle="tab" >기부 받기</a></li>
   	</ul>
   	</div>
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane fade in active" id="donor">
+  	<div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="donor" >
 			<div class="panel panel-default">
 			<div class="panel-body">
 				<h3 align="center">기부한 환자 현황</h3>

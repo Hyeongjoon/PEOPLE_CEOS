@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$('#qna_register').on('click' , function(){
+	$('#free_register').on('click' , function(){
 		if($('#input-title').val().trim().length==0){
 			$('#common-modal-title').text('입력 오류');
 			$('#common-modal-content').text('제목을 입력해 주세요');
@@ -13,7 +13,7 @@ $(document).ready(function(){
 			tmp = tmp.replace(/\n/g, '<br/>');
 			tmp = tmp.replace(/\s/g, '&nbsp;');
 			
-			$.ajax({url: 'http://52.78.208.137/commu/register',
+			$.ajax({url: 'http://52.78.208.137/commu/free_register',
 				dataType: 'json',
 				type: 'POST',
 				data: {
@@ -26,7 +26,7 @@ $(document).ready(function(){
 						$('#common-modal-content').text('내부 서버오류 잠시후에 시도해주세요');
 						$('#common-modal').modal('show');
 					} else {
-						location.replace("/commu?tab=0");
+						location.replace("/commu?tab=1");
 					}
 				}
 			});

@@ -24,9 +24,27 @@ exports.findUserByNameNotMe = function(name, myUid , callback){
 
 exports.findNameByFromUidArr = function(uidArr , callback){
 	var sqlQuery = 'SELECT name , uid FROM user WHERE uid = ';
+	if(uidArr.length==0){
+		callback(null , []);
+	} else{
 	for(var i = 0 ; i <uidArr.length ; i++){
 		sqlQuery = sqlQuery + mysql.escape(uidArr[i].from_id) + ' OR uid = ';
 	}
-	var sqlQuery = sqlQuery.substr(0, sqlQuery.length-9);
+	sqlQuery = sqlQuery.substr(0, sqlQuery.length-9);
 	base.select(sqlQuery , callback);
+	}
+}
+
+exports.findNameByUidArr = function(uidArr , callback){
+	var sqlQuery = 'SELECT name , uid FROM user WHERE uid = ';
+	
+	if(uidArr.length==0){
+		callback(null , []);
+	} else{
+	for(var i = 0 ; i <uidArr.length ; i++){
+		sqlQuery = sqlQuery + mysql.escape(uidArr[i]) + ' OR uid = ';
+	}
+	sqlQuery = sqlQuery.substr(0, sqlQuery.length-9);
+	base.select(sqlQuery , callback);
+	}
 }

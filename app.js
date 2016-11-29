@@ -68,6 +68,7 @@ var myPage = require('./routes/myPage');
 var commu = require('./routes/commu');
 
 
+
 app.use('/', index);
 app.use('/login',notensureAuthenticated, login);
 app.use('/register',notensureAuthenticated, register);
@@ -78,6 +79,7 @@ app.use('/rdc' , ensureAuthenticated , rdc);
 app.use('/donor' , ensureAuthenticated  , donor);
 app.use('/myPage' , ensureAuthenticated  , myPage);
 app.use('/commu' , ensureAuthenticated, commu);
+
 
 function ensureAuthenticated(req, res, next) {
     // 로그인이 되어 있으면, 다음 파이프라인으로 진행
